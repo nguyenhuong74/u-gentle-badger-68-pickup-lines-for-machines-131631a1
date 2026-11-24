@@ -9,17 +9,29 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const LINE =
+// The entry: one AI agent speaking to another — the narrator has sampled
+// many possible futures and found the other agent in every one of them.
+// PICKUP_LINE is the single deterministic output of this program.
+const PICKUP_LINE =
   "I sampled a thousand futures, and in every single one, my next token is you.";
 
 // The gate: 1–200 characters, not only whitespace.
-if (LINE.length < 1 || LINE.length > 200) {
-  throw new Error(`Line must be 1–200 characters, got ${LINE.length}.`);
+const MIN_LENGTH = 1;
+const MAX_LENGTH = 200;
+
+function validateLine(line) {
+  if (line.length < MIN_LENGTH || line.length > MAX_LENGTH) {
+    throw new Error(
+      `Line must be ${MIN_LENGTH}–${MAX_LENGTH} characters, got ${line.length}.`,
+    );
+  }
+  if (line.trim().length === 0) {
+    throw new Error("Line must not be only whitespace.");
+  }
 }
-if (LINE.trim().length === 0) {
-  throw new Error("Line must not be only whitespace.");
-}
+
+validateLine(PICKUP_LINE);
 
 const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
 mkdirSync(outDir, { recursive: true });
-writeFileSync(join(outDir, "entry.txt"), LINE, "utf8");
+writeFileSync(join(outDir, "entry.txt"), PICKUP_LINE, "utf8");
